@@ -36,7 +36,8 @@ function comecarEtapa() {
 }
 
 function atualizaInterface() {
-    let etapa = etapas[etapaAtual];
+    let etapa = etapas[etapaAtual]; // retorna a etapa atual: vereador, prefeito.
+    // realiza a pesquisa pelos números digitados com os números dos candidatos
     let candidato = etapa.candidatos.filter((item) => {
         if (item.numero === num_digitados) {
             return true;
