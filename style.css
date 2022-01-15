@@ -24,6 +24,10 @@ body {
     flex-direction: column;
 
 }
+.aviso-nulo-branco {
+    font-size: 20px;
+    font-weight: bold;
+}
 .teclado {
     background-color: #403a3a;
     margin-left: 30px;

@@ -18,6 +18,7 @@ let num_digitados = '';
 function comecarEtapa() {
     let etapa = etapas[etapaAtual];
     let boxNumeroHtml = ''; // número a exibir na tela
+    num_digitados = '';
 
     for (let i = 0; i < etapa.numeros; i++) { // exibe a quantidade de espaços para prefeito ou vereador
         if (i === 0) {
@@ -50,27 +51,36 @@ function atualizaInterface() {
     });
 
     // se foi encontrado o candidato
-    if(candidato.length > 0) {
+    if (candidato.length > 0) {
         candidato = candidato[0];
         seuVotoPara.style.display = 'block';
         aviso.style.display = 'block';
         descricao.innerHTML = `Nome: ${candidato.nome}<br>Partido: ${candidato.partido}`;
         console.log('candidato: ', candidato);
 
-        let fotosHtml = ' ';
+        let fotosHtml = '';
         for (let i in candidato.fotos) {
-            fotosHtml += `<div class="d-1-image"><img src="img/${candidato.fotos[i].url}" alt="Prefeito">${candidato.fotos[i].legenda}</div>`;
+            fotosHtml += `<div class="d-1-image"><img src="img/${candidato.fotos[i].url}" alt="Prefeito" >${candidato.fotos[i].legenda}</div>`;
         }
 
         area_candidatos_img.innerHTML = fotosHtml;
+        console.log(candidato)
+
+    } else {
+        // caso não seja encontrado
+        seuVotoPara.style.display = 'block';
+        aviso.style.display = 'block';
+        descricao.innerHTML = '<div class="aviso-nulo-branco pisca">VOTO NULO</div>';
+        console.log(candidato)
     }
-    
+
 }
 
 // captura informações das teclas
 function clicou(n) {
     // atribui o seletor pisca ao elemento que exibe o número na tela
     let elemNumero = document.querySelector('.numero.pisca');
+    console.log(elemNumero)
 
     // verifica se há boxs piscando
     if (elemNumero !== null) {
@@ -100,7 +110,7 @@ function branco() {
 }
 
 function corrige() {
-    alert('Clicou em corrige');
+    comecarEtapa();
 }
 
 function confirma() {
