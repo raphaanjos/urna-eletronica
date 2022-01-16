@@ -14,11 +14,15 @@ let numeros_do_candidato = document.querySelector('.d-1-3');
 // controle de ambiente
 let etapaAtual = 0;
 let num_digitados = '';
+let voto_branco = false;
+let voto_confirmado = false;
+let votos = [];
 
 function comecarEtapa() {
     let etapa = etapas[etapaAtual];
     let boxNumeroHtml = ''; // número a exibir na tela
     num_digitados = '';
+    voto_branco = false;
 
     for (let i = 0; i < etapa.numeros; i++) { // exibe a quantidade de espaços para prefeito ou vereador
         if (i === 0) {
@@ -56,22 +60,26 @@ function atualizaInterface() {
         seuVotoPara.style.display = 'block';
         aviso.style.display = 'block';
         descricao.innerHTML = `Nome: ${candidato.nome}<br>Partido: ${candidato.partido}`;
-        console.log('candidato: ', candidato);
+
+        if (candidato.vice !== undefined) {
+            descricao.innerHTML = `Nome: ${candidato.nome}<br>Partido: ${candidato.partido}<br>Vice: ${candidato.vice}`;
+        }
 
         let fotosHtml = '';
         for (let i in candidato.fotos) {
-            fotosHtml += `<div class="d-1-image"><img src="img/${candidato.fotos[i].url}" alt="Prefeito" >${candidato.fotos[i].legenda}</div>`;
+            if (candidato.fotos[i].small) {
+                fotosHtml += `<div class="d-1-image small"><img src="img/${candidato.fotos[i].url}" alt="Prefeito" >${candidato.fotos[i].legenda}</div>`;
+            } else {
+                fotosHtml += `<div class="d-1-image"><img src="img/${candidato.fotos[i].url}" alt="Prefeito" >${candidato.fotos[i].legenda}</div>`;
+            }
         }
 
         area_candidatos_img.innerHTML = fotosHtml;
-        console.log(candidato)
-
     } else {
         // caso não seja encontrado
         seuVotoPara.style.display = 'block';
         aviso.style.display = 'block';
         descricao.innerHTML = '<div class="aviso-nulo-branco pisca">VOTO NULO</div>';
-        console.log(candidato)
     }
 
 }
@@ -80,7 +88,6 @@ function atualizaInterface() {
 function clicou(n) {
     // atribui o seletor pisca ao elemento que exibe o número na tela
     let elemNumero = document.querySelector('.numero.pisca');
-    console.log(elemNumero)
 
     // verifica se há boxs piscando
     if (elemNumero !== null) {
@@ -106,7 +113,14 @@ function clicou(n) {
 }
 
 function branco() {
-    alert('Clicou em branco');
+    // se o eleitor não digitou números
+    voto_branco = true;
+    area_candidatos_img.innerHTML = '';
+    num_digitados = '';
+    numeros_do_candidato.innerHTML = '';
+    seuVotoPara.style.display = 'block';
+    aviso.style.display = 'block';
+    descricao.innerHTML = '<div class="aviso-nulo-branco pisca">VOTO EM BRANCO</div>';
 }
 
 function corrige() {
@@ -114,7 +128,67 @@ function corrige() {
 }
 
 function confirma() {
-    alert('clicou em confirma');
+    let etapa = etapas[etapaAtual];
+
+    // para voto em branco
+    if (voto_branco === true) {
+        voto_confirmado = true;
+
+        votos.push({
+            etapa: etapa.titulo,
+            voto: 'Branco'
+        });
+
+    } else if (num_digitados.length === etapa.numeros) {
+        voto_confirmado = true;
+
+        let confirmado = false;
+        for (let j = 0; j < etapa.candidatos.length; j++) {
+
+            // verifica se o número do candidato existe
+            if (num_digitados === etapa.candidatos[j].numero) {
+
+                if (etapa.numeros === 2) {
+                    votos.push({
+                        etapa: etapa.titulo,
+                        candidato: etapa.candidatos[j].nome,
+                        numero: etapa.candidatos[j].numero,
+                        vice: etapa.candidatos[j].vice
+                    })
+                } else {
+                    votos.push({
+                        etapa: etapa.titulo,
+                        candidato: etapa.candidatos[j].nome,
+                        numero: etapa.candidatos[j].numero,
+                    })
+                }
+
+                confirmado = true;
+            }
+
+        }
+
+        // se o for voto nulo
+        if (confirmado !== true) {
+            votos.push({
+                etapa: etapa.titulo,
+                numero: num_digitados,
+                voto: 'Nulo'
+            })
+        }
+    }
+
+    // se confirmar o voto
+    if (voto_confirmado) {
+        etapaAtual++;
+        if (etapas[etapaAtual] !== undefined) {
+            comecarEtapa();
+        } else {
+            document.querySelector('.tela').innerHTML = '<div class="aviso-fim pisca">FIM</div>';
+        }
+    }
+
+    console.log(votos);
 }
 
 comecarEtapa();
