@@ -1,3 +1,5 @@
+/* Otimizar funções */
+
 /**
  * o método querySelector() retorna apenas o primeiro elemento que corresponde aos seletores especificados. 
  * Para retornar todas as correspondências, use o método querySelectorAll() .
