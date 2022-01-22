@@ -1,4 +1,4 @@
-/* Otimizar funções */
+/* Otimizar funções para merlhor performance */
 
 /**
  * o método querySelector() retorna apenas o primeiro elemento que corresponde aos seletores especificados. 
